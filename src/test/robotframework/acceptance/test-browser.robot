@@ -2,7 +2,10 @@
 Library    SeleniumLibrary
 
 *** Test Cases ***
-Open cnblogs
+Open-Baidu-Close
+    Open Browser    https://www.baidu.com     chrome
+    Close Browser
+
+Open-Cnblogs-Capture
     Open Browser    https://www.cnblogs.com     chrome
-#    Close Browser
     Capture Page Screenshot

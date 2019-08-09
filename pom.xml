@@ -27,12 +27,34 @@
             <version>0.0.13</version>
         </dependency>
     </dependencies>
+
+    <profiles>
+        <profile>
+            <id>open-baidu-close</id>
+            <properties>
+                <tests-case>Open-Baidu-Close</tests-case>
+            </properties>
+        </profile>
+        <profile>
+            <id>open-cnblogs-capture</id>
+            <properties>
+                <tests-case>Open-Cnblogs-Capture</tests-case>
+            </properties>
+        </profile>
+    </profiles>
+
     <build>
         <plugins>
             <plugin>
                 <groupId>org.robotframework</groupId>
                 <artifactId>robotframework-maven-plugin</artifactId>
                 <version>1.5.1</version>
+                <configuration>
+                    <logLevel>TRACE:INFO</logLevel>
+                    <testCasesDirectory>${project.basedir}/src/test/robotframework/acceptance</testCasesDirectory>
+                    <tests>${tests-case}</tests>
+                    <outputDirectory>${project.build.directory}/robotframework-reports/${tests-case}</outputDirectory>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>
