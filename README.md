@@ -30,8 +30,16 @@ Python + robotframework + Appium
     https://www.cnblogs.com/feng0815/p/8179714.html
     6.1 安装Android SDK，需要在模拟器上运行apk文件 （http://tools.android-studio.org/index.php/sdk/）
     6.2 安装nodejs 官网(https://nodejs.org/en/download/)
-    6.3 安装Appium Desktop(
-    http://pan.baidu.com/s/1jGvAISu)
+    6.3 安装Appium Desktop(http://pan.baidu.com/s/1jGvAISu)
+    File -> New Session Window  创建Appium客户端，方便元素定位
+    {
+      "platformName": "Android",
+      "platformVersion": "4.4.2",
+      "deviceName": "127.0.0.1:62025",
+      "appPackage": "zz.dela.cmcc.traffic",
+      "appActivity": "zz.dela.cmcc.traffic.features.splash.view.SplashActivity",
+      "noReset": true
+    }
 7、安装夜神模拟器
     启动模拟器
     adb devices 如果没有发现设备信息，将SDK目录下的adb.exe文件，复制到夜神模拟器的目录下，复制过去之后改名为nox_adb.exe，然后重启
@@ -45,3 +53,6 @@ Python + robotframework + Appium
 
 9、RIDE基本配置
     https://www.cnblogs.com/lynn-li/p/6290268.html
+    *** Test Cases 打开app应用***
+    Case1
+        Open Application    http://127.0.0.1:4723/wd/hub    platformName=Android    platformVersion=4.4.2    deviceName=127.0.0.1:62025    appPackage=zz.dela.cmcc.traffic    appActivity=zz.dela.cmcc.traffic.features.splash.view.SplashActivity      noReset=true
