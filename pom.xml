@@ -12,7 +12,6 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <browser>jbrowser</browser>
     </properties>
 
     <dependencies>
@@ -20,11 +19,6 @@
             <groupId>com.github.hi-fi</groupId>
             <artifactId>robotframework-seleniumlibrary</artifactId>
             <version>3.14.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.github.hi-fi</groupId>
-            <artifactId>robotframework-httprequestlibrary</artifactId>
-            <version>0.0.13</version>
         </dependency>
     </dependencies>
 
