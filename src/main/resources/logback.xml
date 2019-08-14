@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration debug="true">
-    <property name="ELK_PATTERN"
-              value="%d{yyyy-MM-dd hh:mm:ss.SSS} %level %logger[%t]: %meta %ext_meta ## %m %replace(%ex){'\n', '|'}%nopex%n"/>
+    <!--日志路径 -->
+    <property name="logback.logs.path" value="./logs"/>
+    <!--项目名 -->
+    <property name="logback.project.name" value="robot"/>
+
     <!-- 控制台输出 -->
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <Encoding>UTF-8</Encoding>
@@ -13,7 +16,23 @@
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
         </layout>
     </appender>
+
+    <!-- 每天生成一个文件 -->
+    <appender name="FILE_DAY" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- Log文件名 -->
+        <file>${logback.logs.path}/${logback.project.name}.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>${logback.logs.path}/${logback.project.name}-%d.log
+            </FileNamePattern>
+            <MaxHistory>30</MaxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d [%relative] [%thread] %-5p %c[%L] - %msg%n</pattern>
+        </encoder>
+    </appender>
+
     <root level="INFO">
         <appender-ref ref="STDOUT"/>
+        <appender-ref ref="FILE_DAY"/>
     </root>
 </configuration>
