@@ -1,0 +1,36 @@
+2019-08-15 02:43:56.681 [932] [ApplicationThread] ERROR org.springframework.boot.SpringApplication[822] - Application run failed
+java.lang.IllegalStateException: java.lang.IllegalStateException: Logback configuration error detected: 
+ERROR in ch.qos.logback.core.joran.spi.Interpreter@10:19 - no applicable action for [Encoding], current ElementPath  is [[configuration][appender][Encoding]]
+ERROR in ch.qos.logback.core.joran.spi.Interpreter@10:19 - no applicable action for [Encoding], current ElementPath  is [[configuration][appender][Encoding]]
+	at org.springframework.boot.context.logging.LoggingApplicationListener.initializeSystem(LoggingApplicationListener.java:301)
+	at org.springframework.boot.context.logging.LoggingApplicationListener.initialize(LoggingApplicationListener.java:264)
+	at org.springframework.boot.context.logging.LoggingApplicationListener.onApplicationEnvironmentPreparedEvent(LoggingApplicationListener.java:226)
+	at org.springframework.boot.context.logging.LoggingApplicationListener.onApplicationEvent(LoggingApplicationListener.java:203)
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.doInvokeListener(SimpleApplicationEventMulticaster.java:172)
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.invokeListener(SimpleApplicationEventMulticaster.java:165)
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.multicastEvent(SimpleApplicationEventMulticaster.java:139)
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.multicastEvent(SimpleApplicationEventMulticaster.java:127)
+	at org.springframework.boot.context.event.EventPublishingRunListener.environmentPrepared(EventPublishingRunListener.java:76)
+	at org.springframework.boot.SpringApplicationRunListeners.environmentPrepared(SpringApplicationRunListeners.java:53)
+	at org.springframework.boot.SpringApplication.prepareEnvironment(SpringApplication.java:341)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:305)
+	at org.springframework.boot.builder.SpringApplicationBuilder.run(SpringApplicationBuilder.java:140)
+	at com.wmh.robotframework.main.Application.lambda$main$0(Application.java:21)
+	at java.lang.Thread.run(Thread.java:748)
+Caused by: java.lang.IllegalStateException: Logback configuration error detected: 
+ERROR in ch.qos.logback.core.joran.spi.Interpreter@10:19 - no applicable action for [Encoding], current ElementPath  is [[configuration][appender][Encoding]]
+ERROR in ch.qos.logback.core.joran.spi.Interpreter@10:19 - no applicable action for [Encoding], current ElementPath  is [[configuration][appender][Encoding]]
+	at org.springframework.boot.logging.logback.LogbackLoggingSystem.loadConfiguration(LogbackLoggingSystem.java:167)
+	at org.springframework.boot.logging.AbstractLoggingSystem.initializeWithSpecificConfig(AbstractLoggingSystem.java:66)
+	at org.springframework.boot.logging.AbstractLoggingSystem.initialize(AbstractLoggingSystem.java:57)
+	at org.springframework.boot.logging.logback.LogbackLoggingSystem.initialize(LogbackLoggingSystem.java:118)
+	at org.springframework.boot.context.logging.LoggingApplicationListener.initializeSystem(LoggingApplicationListener.java:294)
+	... 14 common frames omitted
+2019-08-15 02:47:31.985 [754] [ApplicationThread] INFO  org.springframework.boot.SpringApplication[50] - Starting application on LICHENYU with PID 17496 (started by LCY in C:\Users\LCY\Desktop\接口文档\robotframework)
+2019-08-15 02:47:31.990 [759] [ApplicationThread] INFO  org.springframework.boot.SpringApplication[647] - No active profile set, falling back to default profiles: default
+2019-08-15 02:47:32.668 [1437] [ApplicationThread] INFO  org.springframework.boot.SpringApplication[59] - Started application in 1.145 seconds (JVM running for 2.347)
+2019-08-15 02:47:32.669 [1438] [ApplicationThread] INFO  com.wmh.robotframework.main.Application[24] - holder thread started ...
+2019-08-15 02:48:15.140 [670] [ApplicationThread] INFO  org.springframework.boot.SpringApplication[50] - Starting application on LICHENYU with PID 23872 (started by LCY in C:\Users\LCY\Desktop\接口文档\robotframework)
+2019-08-15 02:48:15.143 [673] [ApplicationThread] INFO  org.springframework.boot.SpringApplication[647] - No active profile set, falling back to default profiles: default
+2019-08-15 02:48:15.744 [1274] [ApplicationThread] INFO  org.springframework.boot.SpringApplication[59] - Started application in 1.008 seconds (JVM running for 2.061)
+2019-08-15 02:48:15.746 [1276] [ApplicationThread] INFO  com.wmh.robotframework.main.Application[24] - holder thread started ...
