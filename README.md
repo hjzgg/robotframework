@@ -9,7 +9,9 @@ robotframework:run "-Dwebdriver.chrome.driver=C:\Program Files (x86)\Google\Chro
 ```
 
 ### Java + robotframework + seleniumlibrary 二次开发
-*   java to exe: http://launch4j.sourceforge.net/
+*   java程序转exe java to exe: http://launch4j.sourceforge.net/
+*   不同浏览器驱动管理  https://github.com/bonigarcia/webdrivermanager
+*   web测试库  https://github.com/Hi-Fi/robotframework-seleniumlibrary-java
 
 
 ### Python + robotframework + appiumlibrary + Appium

@@ -1,25 +1,36 @@
 package com.wmh.robotframework.test;
 
+import com.wmh.robotframework.browser.BrowserDriverManager;
 import com.wmh.robotframework.execute.RobotFrameworkMojo;
 import com.wmh.robotframework.main.Application;
-import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.util.ResourceUtils;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 
 @SpringBootTest(classes = Application.class)
 @RunWith(SpringRunner.class)
 public class RobotFrameworkMojoTest {
+    private static final Logger LOGGER = LoggerFactory.getLogger(RobotFrameworkMojoTest.class);
 
     @Test
-    public void test() {
-//        WebDriverManager.chromedriver().setup();
-        System.setProperty("webdriver.chrome.driver", "C:\\Users\\LCY\\.m2\\repository\\webdriver\\chromedriver\\win32\\76.0.3809.68\\chromedriver.exe");
+    public void test() throws FileNotFoundException {
+        BrowserDriverManager.chromedriver().setup();
+        String browserDriverPath = BrowserDriverManager.chromedriver().getBinaryPath();
+        LOGGER.info("load browser driver path: " + browserDriverPath);
+        System.setProperty("webdriver.chrome.driver", browserDriverPath);
+
         RobotFrameworkMojo robotFrameworkMojo = new RobotFrameworkMojo();
-        robotFrameworkMojo.setTestCasesDirectory(new File("C:\\Users\\LCY\\Desktop\\接口文档\\robotframework\\src\\test\\robotframework\\acceptance"));
+        String path = ResourceUtils.getFile("classpath:").getPath();
+        LOGGER.error("TEST REPORT PATH IS " + path);
+        robotFrameworkMojo.setTestCasesDirectory(new File(path + "/robotframework/acceptance"));
+        robotFrameworkMojo.setOutputDirectory(new File(path + "/report"));
         robotFrameworkMojo.execute();
     }
 }

@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite failures="0" skipped="0" tests="2" name="Acceptance" time="12.493" errors="0">
-<testcase classname="Acceptance.Test-Browser" name="Open-Baidu-Close" time="6.275">
-</testcase>
-<testcase classname="Acceptance.Test-Browser" name="Open-Cnblogs-Capture" time="5.506">
-</testcase>
-</testsuite>

@@ -67,18 +67,12 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- https://github.com/bonigarcia/webdrivermanager -->
         <!-- https://github.com/Hi-Fi/robotframework-seleniumlibrary-java -->
         <dependency>
             <groupId>com.github.hi-fi</groupId>
             <artifactId>robotframework-seleniumlibrary</artifactId>
-            <version>3.141.59.265</version>
-        </dependency>
-
-        <!-- https://github.com/bonigarcia/webdrivermanager -->
-        <dependency>
-            <groupId>io.github.bonigarcia</groupId>
-            <artifactId>webdrivermanager</artifactId>
-            <version>3.4.0</version>
+            <version>3.14.0.0</version>
         </dependency>
 
         <!-- jcl-over-slf4j -->
@@ -94,6 +88,18 @@
             <artifactId>lombok</artifactId>
             <version>1.18.8</version>
             <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.rauschig</groupId>
+            <artifactId>jarchivelib</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>1.11.3</version>
         </dependency>
     </dependencies>
 
