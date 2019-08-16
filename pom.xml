@@ -103,6 +103,28 @@
         </dependency>
     </dependencies>
 
+    <profiles>
+        <profile>
+            <id>gui</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+            </properties>
+        </profile>
+        <profile>
+            <id>web</id>
+            <properties>
+            </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-web</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
+
     <build>
         <finalName>robot</finalName>
         <plugins>

@@ -20,11 +20,27 @@ public class RobotFrameworkMojoTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(RobotFrameworkMojoTest.class);
 
     @Test
-    public void test() throws FileNotFoundException {
-        BrowserDriverManager.chromedriver().setup();
+    public void testChrome() throws FileNotFoundException {
+        BrowserDriverManager.chromedriver().useMirror().setup();
+//        BrowserDriverManager.chromedriver().useMirror().version("77.0.3865.10").setup();
         String browserDriverPath = BrowserDriverManager.chromedriver().getBinaryPath();
         LOGGER.info("load browser driver path: " + browserDriverPath);
         System.setProperty("webdriver.chrome.driver", browserDriverPath);
+
+        RobotFrameworkMojo robotFrameworkMojo = new RobotFrameworkMojo();
+        String path = ResourceUtils.getFile("classpath:").getPath();
+        LOGGER.error("TEST REPORT PATH IS " + path);
+        robotFrameworkMojo.setTestCasesDirectory(new File(path + "/robotframework/acceptance"));
+        robotFrameworkMojo.setOutputDirectory(new File(path + "/report"));
+        robotFrameworkMojo.execute();
+    }
+
+    @Test
+    public void testIE() throws FileNotFoundException {
+        BrowserDriverManager.iedriver().setup();
+        String browserDriverPath = BrowserDriverManager.iedriver().getBinaryPath();
+        LOGGER.info("load browser driver path: " + browserDriverPath);
+        System.setProperty("webdriver.ie.driver", browserDriverPath);
 
         RobotFrameworkMojo robotFrameworkMojo = new RobotFrameworkMojo();
         String path = ResourceUtils.getFile("classpath:").getPath();

@@ -19,6 +19,7 @@ package com.wmh.robotframework.browser;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.internal.LinkedTreeMap;
+import com.wmh.robotframework.config.BrowserExportProperties;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -1044,7 +1045,6 @@ public abstract class BrowserDriverManager {
 
         if (isUsingTaobaoMirror()) {
             urls = getDriversFromMirror(driverUrl);
-
         } else {
             String driverVersion = versionToDownload;
 
@@ -1224,4 +1224,7 @@ public abstract class BrowserDriverManager {
         this.config = config;
     }
 
+    public boolean canUseMirror() {
+        return getMirrorUrl().isPresent();
+    }
 }
