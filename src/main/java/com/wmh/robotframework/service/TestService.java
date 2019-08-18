@@ -2,22 +2,21 @@ package com.wmh.robotframework.service;
 
 import com.wmh.robotframework.browser.BrowserDriverManager;
 import com.wmh.robotframework.config.BrowserExportProperties;
+import com.wmh.robotframework.config.CommonConfig;
 import com.wmh.robotframework.config.SpringContext;
 import com.wmh.robotframework.execute.RobotFrameworkMojo;
-import com.wmh.robotframework.file.FileUtils;
-import com.wmh.robotframework.file.ReadSign;
 import com.wmh.robotframework.log.ILogService;
 import com.wmh.robotframework.log.LoggerAdapter;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.DigestUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.*;
-import java.util.Objects;
+import java.io.RandomAccessFile;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.concurrent.*;
 
 import static com.wmh.robotframework.log.LogConstants.TEST_CASE_CONTEXT_ID;
@@ -35,8 +34,8 @@ public class TestService implements LoggerAdapter {
     @Autowired
     private BrowserExportProperties browserExportProperties;
 
-    public String execute(TestProperties tp) {
-        String testCaseId = DigestUtils.md5DigestAsHex(tp.getTestCasesDirectory().getBytes()).toUpperCase();
+    public void execute(TestProperties tp) {
+        String testCaseId = tp.getTestCaseId();
         if (StringUtils.isBlank(tp.getDebugLogFile())) {
             try {
                 File tmpFile = Files.createTempFile(Files.createTempDirectory(testCaseId), "debug", ".log").toFile();
@@ -71,40 +70,30 @@ public class TestService implements LoggerAdapter {
         });
 
         //注册debug log文件的监听器
-        try {
-            Path debuglog = Paths.get(tp.getDebugLogFile());
-            WatchService watcher = debuglog.getFileSystem().newWatchService();
-            debuglog.register(
-                    watcher,
-                    StandardWatchEventKinds.ENTRY_CREATE,
-                    StandardWatchEventKinds.ENTRY_DELETE,
-                    StandardWatchEventKinds.ENTRY_MODIFY
-            );
-
+        ES.submit(() -> {
+            //一次 读取 字节数
+            final int length = 1024;
+            //重试次数
+            int retry = 0;
+            //日志同步
             ILogService logService = SpringContext.getBean(ILogService.class);
-            long pos = 0;
-            while (future.isDone() || future.isCancelled()) {
-                WatchKey watckKey = watcher.take();
-                if (Objects.isNull(watckKey)) {
-                    continue;
-                }
-                for (WatchEvent<?> watchEvent : watckKey.pollEvents()) {
-                    final WatchEvent.Kind<?> eventKind = watchEvent.kind();
-                    if (eventKind == StandardWatchEventKinds.ENTRY_MODIFY) {
-                        ReadSign rs = FileUtils.readFile(tp.getDebugLogFile(), pos);
-                        pos = rs.getPos();
-                        if (Objects.nonNull(logService)) {
-                            logService.log(testCaseId, rs.getContent());
+            try (RandomAccessFile raf = new RandomAccessFile(tp.getDebugLogFile(), "r")) {
+                while (true) {
+                    byte[] content = new byte[length];
+                    int ll = raf.read(content);
+                    //文件已经读取完毕
+                    if (ll <= 0) {
+                        if ((future.isDone() || future.isCancelled()) && retry++ > 2) {
+                            break;
                         }
-                        break;
+                        TimeUnit.MILLISECONDS.sleep(200);
+                    } else {
+                        logService.log(testCaseId, new String(content, 0, ll, StandardCharsets.UTF_8));
                     }
                 }
+            } catch (Exception e) {
+                LOGGER.error("Debug log 同步异常...", e);
             }
-            watcher.close();
-        } catch (Exception e) {
-            LOGGER.error("文件监听器注册失败...", e);
-        }
-
-        return testCaseId;
+        });
     }
 }
