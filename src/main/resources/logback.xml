@@ -30,6 +30,14 @@
         </encoder>
     </appender>
 
+    <!-- 日志收集 -->
+    <appender name="collect-appender" class="com.wmh.robotframework.log.CollectAppender"/>
+
+    <logger name="collect-logger" additivity="true">
+        <appender-ref ref="collect-appender"/>
+    </logger>
+
+
     <root level="INFO">
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="FILE_DAY"/>

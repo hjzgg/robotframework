@@ -93,14 +93,14 @@ public class OperaDriverManager extends BrowserDriverManager {
 
     @Override
     protected File postDownload(File archive) {
-        log.trace("Post processing for Opera: {}", archive);
+        LOGGER.trace("Post processing for Opera: {}", archive);
 
         File extractFolder = archive.getParentFile()
                 .listFiles(getFolderFilter())[0];
         if (!extractFolder.isFile()) {
             File target;
             try {
-                log.trace("Opera extract folder (to be deleted): {}",
+                LOGGER.trace("Opera extract folder (to be deleted): {}",
                         extractFolder);
                 File[] listFiles = extractFolder.listFiles();
                 int i = 0;
@@ -115,13 +115,13 @@ public class OperaDriverManager extends BrowserDriverManager {
                     isOperaDriver = config().isExecutable(operadriver)
                             && operadriver.getName().contains(getDriverName());
                     i++;
-                    log.trace("{} is valid: {}", operadriver, isOperaDriver);
+                    LOGGER.trace("{} is valid: {}", operadriver, isOperaDriver);
                 } while (!isOperaDriver);
-                log.info("Operadriver binary: {}", operadriver);
+                LOGGER.info("Operadriver binary: {}", operadriver);
 
                 target = new File(archive.getParentFile().getAbsolutePath(),
                         operadriver.getName());
-                log.trace("Operadriver target: {}", target);
+                LOGGER.trace("Operadriver target: {}", target);
 
                 downloader.renameFile(operadriver, target);
             } finally {

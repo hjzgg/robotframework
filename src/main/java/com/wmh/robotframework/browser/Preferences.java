@@ -16,13 +16,12 @@
  */
 package com.wmh.robotframework.browser;
 
-import org.slf4j.Logger;
+import com.wmh.robotframework.log.LoggerAdapter;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.prefs.BackingStoreException;
 
-import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.prefs.Preferences.userNodeForPackage;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -33,9 +32,9 @@ import static org.slf4j.LoggerFactory.getLogger;
  * @author Boni Garcia (boni.gg@gmail.com)
  * @since 3.0.0
  */
-public class Preferences {
+public class Preferences implements LoggerAdapter {
 
-    final Logger log = getLogger(lookup().lookupClass());
+//    final Logger log = getLogger(lookup().lookupClass());
 
     static final String TTL = "-ttl";
     //windows系统注册表路径 HKEY_CURRENT_USER\Software\JavaSoft\Prefs
@@ -61,8 +60,8 @@ public class Preferences {
             long expirationTime = new Date().getTime()
                     + SECONDS.toMillis(config.getTtl());
             prefs.putLong(getExpirationKey(key), expirationTime);
-            if (log.isDebugEnabled()) {
-                log.debug("Storing preference {}={} (valid until {})", key,
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Storing preference {}={} (valid until {})", key,
                         value, formatTime(expirationTime));
             }
         }
@@ -75,10 +74,10 @@ public class Preferences {
 
     public void clear() {
         try {
-            log.info("Clearing WebDriverManager preferences");
+            LOGGER.info("Clearing WebDriverManager preferences");
             prefs.clear();
         } catch (BackingStoreException e) {
-            log.warn("Exception clearing preferences", e);
+            LOGGER.warn("Exception clearing preferences", e);
         }
     }
 
@@ -89,7 +88,7 @@ public class Preferences {
                 && expirationTime > now;
         if (!isValid) {
             String expirationDate = formatTime(expirationTime);
-            log.debug("Removing preference {}={} (expired on {})", key, value,
+            LOGGER.debug("Removing preference {}={} (expired on {})", key, value,
                     expirationDate);
             clearFromPreferences(key);
         }
@@ -114,7 +113,7 @@ public class Preferences {
             valueInPreferences &= checkValidity(key, valueFromPreferences,
                     expirationTime);
             if (valueInPreferences) {
-                log.debug("Preference found {}={} (valid until {})", key,
+                LOGGER.debug("Preference found {}={} (valid until {})", key,
                         valueFromPreferences, expirationDate);
             }
         }

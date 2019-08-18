@@ -1,17 +1,14 @@
 package com.wmh.robotframework.execute;
 
+import com.wmh.robotframework.log.LoggerAdapter;
 import org.python.util.PythonInterpreter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractMojoWithLoadedClasspath {
-    protected static final Logger LOGGER = LoggerFactory.getLogger(AbstractMojoWithLoadedClasspath.class);
+public abstract class AbstractMojoWithLoadedClasspath implements LoggerAdapter {
 
     private static RobotMojoClassLoader currentMojoLoader;
     private static String ROBOT_ARTIFACT = join(File.separator, "org", "robotframework", "robotframework");

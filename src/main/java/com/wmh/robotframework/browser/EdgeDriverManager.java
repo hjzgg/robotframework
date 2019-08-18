@@ -92,7 +92,7 @@ public class EdgeDriverManager extends BrowserDriverManager {
         List<URL> urlList = new ArrayList<>();
 
         URL driverUrl = getDriverUrl();
-        log.debug("Reading {} to find out the latest version of Edge driver",
+        LOGGER.debug("Reading {} to find out the latest version of Edge driver",
                 driverUrl);
 
         try (InputStream in = httpClient
@@ -138,12 +138,12 @@ public class EdgeDriverManager extends BrowserDriverManager {
 
     @Override
     protected List<URL> checkLatest(List<URL> list, String driver) {
-        log.trace("Checking the lastest version of {} with URL list {}", driver,
+        LOGGER.trace("Checking the lastest version of {} with URL list {}", driver,
                 list);
         List<URL> out = new ArrayList<>();
         versionToDownload = listVersions.iterator().next();
         out.add(list.iterator().next());
-        log.info("Latest version of MicrosoftWebDriver is {}",
+        LOGGER.info("Latest version of MicrosoftWebDriver is {}",
                 versionToDownload);
         return out;
     }

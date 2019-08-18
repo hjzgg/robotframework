@@ -14,10 +14,12 @@ import org.springframework.util.ResourceUtils;
 import java.io.File;
 import java.io.FileNotFoundException;
 
+import static com.wmh.robotframework.log.LogConstants.COLLECT_LOGGER_NAME;
+
 @SpringBootTest(classes = Application.class)
 @RunWith(SpringRunner.class)
 public class RobotFrameworkMojoTest {
-    private static final Logger LOGGER = LoggerFactory.getLogger(RobotFrameworkMojoTest.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(COLLECT_LOGGER_NAME);
 
     @Test
     public void testChrome() throws FileNotFoundException {
@@ -37,7 +39,7 @@ public class RobotFrameworkMojoTest {
 
     @Test
     public void testIE() throws FileNotFoundException {
-        BrowserDriverManager.iedriver().setup();
+        BrowserDriverManager.iedriver().useMirror().setup();
         String browserDriverPath = BrowserDriverManager.iedriver().getBinaryPath();
         LOGGER.info("load browser driver path: " + browserDriverPath);
         System.setProperty("webdriver.ie.driver", browserDriverPath);

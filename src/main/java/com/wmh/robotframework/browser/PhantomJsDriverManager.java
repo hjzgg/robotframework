@@ -77,7 +77,7 @@ public class PhantomJsDriverManager extends BrowserDriverManager {
     @Override
     protected List<URL> getDrivers() throws IOException {
         URL driverUrl = getDriverUrl();
-        log.info("Reading {} to seek {}", driverUrl, getDriverName());
+        LOGGER.info("Reading {} to seek {}", driverUrl, getDriverName());
         return getDriversFromMirror(driverUrl);
     }
 
@@ -122,11 +122,11 @@ public class PhantomJsDriverManager extends BrowserDriverManager {
 
     @Override
     protected File postDownload(File archive) {
-        log.trace("PhantomJS package name: {}", archive);
+        LOGGER.trace("PhantomJS package name: {}", archive);
 
         File extractFolder = archive.getParentFile()
                 .listFiles(getFolderFilter())[0];
-        log.trace("PhantomJS extract folder (to be deleted): {}",
+        LOGGER.trace("PhantomJS extract folder (to be deleted): {}",
                 extractFolder);
 
         File binFolder = new File(
@@ -138,15 +138,15 @@ public class PhantomJsDriverManager extends BrowserDriverManager {
             binaryIndex = 3;
         }
 
-        log.trace("PhantomJS bin folder: {} (index {})", binFolder,
+        LOGGER.trace("PhantomJS bin folder: {} (index {})", binFolder,
                 binaryIndex);
 
         File phantomjs = binFolder.listFiles()[binaryIndex];
-        log.trace("PhantomJS binary: {}", phantomjs);
+        LOGGER.trace("PhantomJS binary: {}", phantomjs);
 
         File target = new File(archive.getParentFile().getAbsolutePath(),
                 phantomjs.getName());
-        log.trace("PhantomJS target: {}", target);
+        LOGGER.trace("PhantomJS target: {}", target);
 
         downloader.renameFile(phantomjs, target);
         downloader.deleteFolder(extractFolder);

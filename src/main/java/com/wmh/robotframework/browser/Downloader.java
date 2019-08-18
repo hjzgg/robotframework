@@ -16,8 +16,8 @@
  */
 package com.wmh.robotframework.browser;
 
+import com.wmh.robotframework.log.LoggerAdapter;
 import org.rauschig.jarchivelib.Archiver;
-import org.slf4j.Logger;
 
 import java.io.*;
 import java.net.URL;
@@ -30,7 +30,6 @@ import java.util.zip.ZipFile;
 
 import static java.io.File.separator;
 import static java.lang.Runtime.getRuntime;
-import static java.lang.invoke.MethodHandles.lookup;
 import static java.nio.file.Files.*;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
@@ -47,9 +46,9 @@ import static org.slf4j.LoggerFactory.getLogger;
  * @author Boni Garcia (boni.gg@gmail.com)
  * @since 1.0.0
  */
-public class Downloader {
+public class Downloader implements LoggerAdapter {
 
-    final Logger log = getLogger(lookup().lookupClass());
+//    final Logger log = getLogger(lookup().lookupClass());
 
     DriverManagerType driverManagerType;
     HttpClient httpClient;
@@ -75,7 +74,7 @@ public class Downloader {
     }
 
     public File getTarget(String version, URL url) {
-        log.trace("getTarget {} {}", version, url);
+        LOGGER.trace("getTarget {} {}", version, url);
         String zip = url.getFile().substring(url.getFile().lastIndexOf('/'));
 
         int iFirst = zip.indexOf('_');
@@ -96,7 +95,7 @@ public class Downloader {
         String target = BrowserDriverManager.getInstance(driverManagerType)
                 .preDownload(path, version);
 
-        log.trace("Target file for URL {} version {} = {}", url, version,
+        LOGGER.trace("Target file for URL {} version {} = {}", url, version,
                 target);
 
         return new File(target);
@@ -104,7 +103,7 @@ public class Downloader {
 
     public String getTargetPath() {
         String targetPath = config.getTargetPath();
-        log.trace("Target path {}", targetPath);
+        LOGGER.trace("Target path {}", targetPath);
 
         // Create repository folder if not exits
         File repository = new File(targetPath);
@@ -116,12 +115,12 @@ public class Downloader {
 
     private Optional<File> downloadAndExtract(URL url, File targetFile)
             throws IOException, InterruptedException {
-        log.info("Downloading {}", url);
+        LOGGER.info("Downloading {}", url);
         File targetFolder = targetFile.getParentFile();
         File tempDir = createTempDirectory("").toFile();
         File temporaryFile = new File(tempDir, targetFile.getName());
 
-        log.trace("Target folder {} ... using temporal file {}", targetFolder,
+        LOGGER.trace("Target folder {} ... using temporal file {}", targetFolder,
                 temporaryFile);
         copyInputStreamToFile(httpClient.execute(httpClient.createHttpGet(url))
                 .getEntity().getContent(), temporaryFile);
@@ -132,7 +131,7 @@ public class Downloader {
 
         if (!binaryExists || config.isOverride()) {
             if (binaryExists) {
-                log.info("Overriding former binary {}", resultingBinary);
+                LOGGER.info("Overriding former binary {}", resultingBinary);
                 deleteFile(resultingBinary);
             }
             moveFileToDirectory(extractedFile, targetFolder, true);
@@ -141,7 +140,7 @@ public class Downloader {
             setFileExecutable(resultingBinary);
         }
         deleteFolder(tempDir);
-        log.trace("Binary driver after extraction {}", resultingBinary);
+        LOGGER.trace("Binary driver after extraction {}", resultingBinary);
 
         return of(resultingBinary);
     }
@@ -155,11 +154,11 @@ public class Downloader {
             for (File file : listFiles) {
                 if (file.getName().startsWith(driverName)
                         && config.isExecutable(file)) {
-                    log.info("Using binary driver previously downloaded");
+                    LOGGER.info("Using binary driver previously downloaded");
                     return of(file);
                 }
             }
-            log.trace("{} does not exist in cache", driverName);
+            LOGGER.trace("{} does not exist in cache", driverName);
         }
         return empty();
     }
@@ -171,7 +170,7 @@ public class Downloader {
         boolean extractFile = !fileName.endsWith("exe")
                 && !fileName.endsWith("jar");
         if (extractFile) {
-            log.info("Extracting binary from compressed file {}", fileName);
+            LOGGER.info("Extracting binary from compressed file {}", fileName);
         }
         if (fileName.endsWith("tar.bz2")) {
             unBZip2(compressedFile);
@@ -191,7 +190,7 @@ public class Downloader {
 
         File result = BrowserDriverManager.getInstance(driverManagerType)
                 .postDownload(compressedFile).getAbsoluteFile();
-        log.trace("Resulting binary file {}", result);
+        LOGGER.trace("Resulting binary file {}", result);
 
         return result;
     }
@@ -207,7 +206,7 @@ public class Downloader {
                 String name = zipEntry.getName();
                 long size = zipEntry.getSize();
                 long compressedSize = zipEntry.getCompressedSize();
-                log.trace("Unzipping {} (size: {} KB, compressed size: {} KB)",
+                LOGGER.trace("Unzipping {} (size: {} KB, compressed size: {} KB)",
                         name, size, compressedSize);
 
                 file = new File(compressedFile.getParentFile(), name);
@@ -227,7 +226,7 @@ public class Downloader {
                     }
                     setFileExecutable(file);
                 } else {
-                    log.debug("{} already exists", file);
+                    LOGGER.debug("{} already exists", file);
                 }
 
             }
@@ -235,7 +234,7 @@ public class Downloader {
     }
 
     private void unGzip(File archive) throws IOException {
-        log.trace("UnGzip {}", archive);
+        LOGGER.trace("UnGzip {}", archive);
         String fileName = archive.getName();
         int iDash = fileName.indexOf('-');
         if (iDash != -1) {
@@ -265,13 +264,13 @@ public class Downloader {
     private void unTarGz(File archive) throws IOException {
         Archiver archiver = createArchiver(TAR, GZIP);
         archiver.extract(archive, archive.getParentFile());
-        log.trace("unTarGz {}", archive);
+        LOGGER.trace("unTarGz {}", archive);
     }
 
     private void unBZip2(File archive) throws IOException {
         Archiver archiver = createArchiver(TAR, BZIP2);
         archiver.extract(archive, archive.getParentFile());
-        log.trace("Unbzip2 {}", archive);
+        LOGGER.trace("Unbzip2 {}", archive);
     }
 
     private void extractMsi(File msi) throws IOException, InterruptedException {
@@ -279,7 +278,7 @@ public class Downloader {
                 createTempDirectory("").toFile().getAbsoluteFile() + separator
                         + msi.getName());
         move(msi.toPath(), tmpMsi.toPath());
-        log.trace("Temporal msi file: {}", tmpMsi);
+        LOGGER.trace("Temporal msi file: {}", tmpMsi);
 
         Process process = getRuntime().exec(new String[]{"msiexec", "/a",
                 tmpMsi.toString(), "/qb", "TARGETDIR=" + msi.getParent()});
@@ -293,24 +292,24 @@ public class Downloader {
     }
 
     protected void setFileExecutable(File file) {
-        log.trace("Setting file {} as executable", file);
+        LOGGER.trace("Setting file {} as executable", file);
         if (!file.setExecutable(true)) {
-            log.warn("Error setting file {} as executable", file);
+            LOGGER.warn("Error setting file {} as executable", file);
         }
     }
 
     protected void renameFile(File from, File to) {
-        log.trace("Renaming file from {} to {}", from, to);
+        LOGGER.trace("Renaming file from {} to {}", from, to);
         if (to.exists()) {
             deleteFile(to);
         }
         if (!from.renameTo(to)) {
-            log.warn("Error renaming file from {} to {}", from, to);
+            LOGGER.warn("Error renaming file from {} to {}", from, to);
         }
     }
 
     protected void deleteFile(File file) {
-        log.trace("Deleting file {}", file);
+        LOGGER.trace("Deleting file {}", file);
         try {
             delete(file.toPath());
         } catch (IOException e) {
@@ -320,7 +319,7 @@ public class Downloader {
 
     protected void deleteFolder(File folder) {
         assert folder.isDirectory();
-        log.trace("Deleting folder {}", folder);
+        LOGGER.trace("Deleting folder {}", folder);
         try {
             deleteDirectory(folder);
         } catch (IOException e) {

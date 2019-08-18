@@ -16,15 +16,14 @@
  */
 package com.wmh.robotframework.browser;
 
+import com.wmh.robotframework.log.LoggerAdapter;
 import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
 import static java.lang.String.join;
-import static java.lang.invoke.MethodHandles.lookup;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -34,9 +33,9 @@ import static org.slf4j.LoggerFactory.getLogger;
  * @author Boni Garcia (boni.gg@gmail.com)
  * @since 3.0.0
  */
-public class Shell {
+public class Shell implements LoggerAdapter {
 
-    static final Logger log = getLogger(lookup().lookupClass());
+//    static final Logger log = getLogger(lookup().lookupClass());
 
     private Shell() {
         throw new IllegalStateException("Utility class");
@@ -52,9 +51,9 @@ public class Shell {
 
     public static String runAndWaitArray(File folder, String[] command) {
         String commandStr = Arrays.toString(command);
-        log.trace("Running command on the shell: {}", commandStr);
+        LOGGER.trace("Running command on the shell: {}", commandStr);
         String result = runAndWaitNoLog(folder, command);
-        log.trace("Result: {}", result);
+        LOGGER.trace("Result: {}", result);
         return result;
     }
 
@@ -66,8 +65,8 @@ public class Shell {
             output = IOUtils.toString(process.getInputStream(), UTF_8);
             process.destroy();
         } catch (IOException e) {
-            if (log.isDebugEnabled()) {
-                log.debug(
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug(
                         "There was a problem executing command <{}> on the shell: {}",
                         join(" ", command), e.getMessage());
             }

@@ -16,6 +16,7 @@
  */
 package com.wmh.robotframework.browser;
 
+import com.wmh.robotframework.log.LoggerAdapter;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
@@ -36,7 +37,6 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.ssl.SSLContexts;
 import org.apache.http.ssl.TrustStrategy;
-import org.slf4j.Logger;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
@@ -52,7 +52,6 @@ import java.util.StringTokenizer;
 
 import static com.wmh.robotframework.browser.Config.isNullOrEmpty;
 import static java.lang.System.getenv;
-import static java.lang.invoke.MethodHandles.lookup;
 import static java.net.URLDecoder.decode;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Optional.empty;
@@ -70,9 +69,9 @@ import static org.slf4j.LoggerFactory.getLogger;
  * @author Boni Garcia
  * @since 2.1.0
  */
-public class HttpClient implements Closeable {
+public class HttpClient implements Closeable, LoggerAdapter {
 
-    final Logger log = getLogger(lookup().lookupClass());
+//    final Logger log = getLogger(lookup().lookupClass());
 
     Config config;
     CloseableHttpClient closeableHttpClient;
@@ -155,7 +154,7 @@ public class HttpClient implements Closeable {
             String errorMessage = "Error HTTP "
                     + response.getStatusLine().getStatusCode() + " executing "
                     + method;
-            log.error(errorMessage);
+            LOGGER.error(errorMessage);
             throw new WebDriverManagerException(errorMessage);
         }
         return response;
@@ -184,7 +183,7 @@ public class HttpClient implements Closeable {
                 String errorMessage = "Detect an unsupported subclass of SocketAddress. "
                         + "Please use the InetSocketAddress or subclass. Actual:"
                         + proxy.get().address().getClass();
-                log.error(errorMessage);
+                LOGGER.error(errorMessage);
                 throw new WebDriverManagerException(errorMessage);
             }
             InetSocketAddress proxyAddress = (InetSocketAddress) proxy.get()

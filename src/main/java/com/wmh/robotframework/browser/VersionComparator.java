@@ -16,13 +16,12 @@
  */
 package com.wmh.robotframework.browser;
 
-import org.slf4j.Logger;
+import com.wmh.robotframework.log.LoggerAdapter;
 
 import java.util.Comparator;
 
 import static java.lang.Integer.parseInt;
 import static java.lang.Math.max;
-import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
 
 /**
@@ -31,9 +30,9 @@ import static org.slf4j.LoggerFactory.getLogger;
  * @author Boni Garcia (boni.gg@gmail.com)
  * @since 2.1.0
  */
-public class VersionComparator implements Comparator<String> {
+public class VersionComparator implements Comparator<String>, LoggerAdapter {
 
-    final Logger log = getLogger(lookup().lookupClass());
+//    final Logger log = getLogger(lookup().lookupClass());
 
     @Override
     public int compare(String v1, String v2) {
@@ -51,7 +50,7 @@ public class VersionComparator implements Comparator<String> {
                     return 1;
                 }
             } catch (Exception e) {
-                log.trace("Exception comparing {} with {} ({})", v1, v2,
+                LOGGER.trace("Exception comparing {} with {} ({})", v1, v2,
                         e.getMessage());
             }
         }

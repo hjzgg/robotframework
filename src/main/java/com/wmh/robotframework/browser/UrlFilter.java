@@ -16,7 +16,7 @@
  */
 package com.wmh.robotframework.browser;
 
-import org.slf4j.Logger;
+import com.wmh.robotframework.log.LoggerAdapter;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -28,7 +28,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import static java.io.File.separator;
-import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.Arrays.copyOf;
 import static java.util.Collections.singletonList;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -39,12 +38,12 @@ import static org.slf4j.LoggerFactory.getLogger;
  * @author Boni Garcia (boni.gg@gmail.com)
  * @since 1.7.2
  */
-public class UrlFilter {
+public class UrlFilter implements LoggerAdapter {
 
-    final Logger log = getLogger(lookup().lookupClass());
+//    final Logger log = getLogger(lookup().lookupClass());
 
     public List<URL> filterByOs(List<URL> list, String osName) {
-        log.trace("URLs before filtering by OS ({}): {}", osName, list);
+        LOGGER.trace("URLs before filtering by OS ({}): {}", osName, list);
         List<URL> out = new ArrayList<>();
 
         for (URL url : list) {
@@ -59,13 +58,13 @@ public class UrlFilter {
             }
         }
 
-        log.trace("URLs after filtering by OS ({}): {}", osName, out);
+        LOGGER.trace("URLs after filtering by OS ({}): {}", osName, out);
         return out;
     }
 
     public List<URL> filterByArch(List<URL> list, Architecture arch,
                                   boolean forcedArch) {
-        log.trace("URLs before filtering by architecture ({}): {}", arch, list);
+        LOGGER.trace("URLs before filtering by architecture ({}): {}", arch, list);
         List<URL> out = new ArrayList<>(list);
 
         if ((forcedArch || out.size() > 1) && arch != null) {
@@ -83,11 +82,11 @@ public class UrlFilter {
             }
         }
 
-        log.trace("URLs after filtering by architecture ({}): {}", arch, out);
+        LOGGER.trace("URLs after filtering by architecture ({}): {}", arch, out);
 
         if (out.isEmpty() && !forcedArch && !list.isEmpty()) {
             out = singletonList(list.get(list.size() - 1));
-            log.trace(
+            LOGGER.trace(
                     "Empty URL list after filtering by architecture ... using last candidate: {}",
                     out);
         }
@@ -97,7 +96,7 @@ public class UrlFilter {
     public List<URL> filterByDistro(List<URL> list, String version)
             throws IOException {
         String distro = getDistroName();
-        log.trace("URLs before filtering by Linux distribution ({}): {}",
+        LOGGER.trace("URLs before filtering by Linux distribution ({}): {}",
                 distro, list);
         List<URL> out = new ArrayList<>(list);
 
@@ -108,15 +107,15 @@ public class UrlFilter {
             }
         }
 
-        log.trace("URLs after filtering by Linux distribution ({}): {}", distro,
+        LOGGER.trace("URLs after filtering by Linux distribution ({}): {}", distro,
                 out);
         return out;
     }
 
     public List<URL> filterByIgnoredVersions(List<URL> list,
                                              String... ignoredVersions) {
-        if (log.isTraceEnabled()) {
-            log.trace("URLs before filtering by ignored versions ({}): {}",
+        if (LOGGER.isTraceEnabled()) {
+            LOGGER.trace("URLs before filtering by ignored versions ({}): {}",
                     Arrays.toString(ignoredVersions), list);
         }
         List<URL> out = new ArrayList<>(list);
@@ -124,14 +123,14 @@ public class UrlFilter {
         for (URL url : list) {
             for (String s : ignoredVersions) {
                 if (url.getFile().contains(s)) {
-                    log.info("Ignoring version {}", s);
+                    LOGGER.info("Ignoring version {}", s);
                     out.remove(url);
                 }
             }
         }
 
-        if (log.isTraceEnabled()) {
-            log.trace("URLs after filtering by ignored versions ({}): {}",
+        if (LOGGER.isTraceEnabled()) {
+            LOGGER.trace("URLs after filtering by ignored versions ({}): {}",
                     Arrays.toString(ignoredVersions), out);
         }
         return out;

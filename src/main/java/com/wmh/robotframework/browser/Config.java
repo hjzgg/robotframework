@@ -16,7 +16,7 @@
  */
 package com.wmh.robotframework.browser;
 
-import org.slf4j.Logger;
+import com.wmh.robotframework.log.LoggerAdapter;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,7 +28,6 @@ import java.util.Properties;
 
 import static com.wmh.robotframework.browser.OperatingSystem.*;
 import static java.lang.String.join;
-import static java.lang.invoke.MethodHandles.lookup;
 import static org.apache.commons.lang3.SystemUtils.*;
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -38,9 +37,9 @@ import static org.slf4j.LoggerFactory.getLogger;
  * @author Boni Garcia (boni.gg@gmail.com)
  * @since 2.2.0
  */
-public class Config {
+public class Config implements LoggerAdapter {
 
-    final Logger log = getLogger(lookup().lookupClass());
+//    final Logger log = getLogger(lookup().lookupClass());
 
     static final String HOME = "~";
 
@@ -198,14 +197,14 @@ public class Config {
         try {
             value = getPropertyFrom(propertiesValue, key);
             if (value == null) {
-                log.trace(
+                LOGGER.trace(
                         "Property {} not found in {}, using default values (in {})",
                         key, propertiesValue, defaultProperties);
                 value = getPropertyFrom(defaultProperties, key);
             }
         } finally {
             if (value == null) {
-                log.trace("Property {} not found in {}, using blank value", key,
+                LOGGER.trace("Property {} not found in {}, using blank value", key,
                         defaultProperties);
                 value = "";
             }
@@ -220,7 +219,7 @@ public class Config {
                     .getResourceAsStream(properties);
             props.load(inputStream);
         } catch (IOException e) {
-            log.trace("Property {} not found in {}", key, properties);
+            LOGGER.trace("Property {} not found in {}", key, properties);
         }
         return props.getProperty(key);
     }
@@ -231,7 +230,7 @@ public class Config {
                 try {
                     ((ConfigKey<?>) field.get(this)).reset();
                 } catch (Exception e) {
-                    log.warn("Exception resetting {}", field);
+                    LOGGER.warn("Exception resetting {}", field);
                 }
             }
         }
