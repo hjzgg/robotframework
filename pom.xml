@@ -72,7 +72,13 @@
         <dependency>
             <groupId>com.github.hi-fi</groupId>
             <artifactId>robotframework-seleniumlibrary</artifactId>
-            <version>3.14.0.0</version>
+            <version>3.141.59.265</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>webdrivermanager</artifactId>
+                    <groupId>io.github.bonigarcia</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- jcl-over-slf4j -->

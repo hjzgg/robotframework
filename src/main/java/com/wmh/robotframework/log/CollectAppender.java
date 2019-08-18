@@ -3,10 +3,15 @@ package com.wmh.robotframework.log;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.IThrowableProxy;
 import ch.qos.logback.core.AppenderBase;
+import com.wmh.robotframework.config.SpringContext;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.MDC;
 
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.Objects;
+
+import static com.wmh.robotframework.log.LogConstants.TEST_CASE_CONTEXT_ID;
 
 public class CollectAppender extends AppenderBase<ILoggingEvent> {
 
@@ -28,7 +33,15 @@ public class CollectAppender extends AppenderBase<ILoggingEvent> {
                 event.getLevel().levelStr,
                 exception.toString()
         );
-        LoggerQueue.getInstance().push(loggerMessage);
+        this.log(loggerMessage);
     }
 
+    private void log(LoggerMessage message) {
+        ILogService logService = SpringContext.getBean(ILogService.class);
+        if (Objects.nonNull(logService)) {
+            String caseId = MDC.get(TEST_CASE_CONTEXT_ID);
+            String msg = String.format("%s - %s - %s - %s", message.getTimestamp(), message.getClassName(), message.getBody(), message.getException());
+            logService.log(caseId, msg);
+        }
+    }
 }

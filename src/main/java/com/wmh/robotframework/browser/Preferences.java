@@ -37,6 +37,7 @@ public class Preferences implements LoggerAdapter {
 //    final Logger log = getLogger(lookup().lookupClass());
 
     static final String TTL = "-ttl";
+
     //windows系统注册表路径 HKEY_CURRENT_USER\Software\JavaSoft\Prefs
     java.util.prefs.Preferences prefs = userNodeForPackage(BrowserDriverManager.class);
     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
