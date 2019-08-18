@@ -15,4 +15,6 @@ public class TestProperties {
     private String testCasesDirectory;
     //测试结果输出位置
     private String outputDirectory;
+    //测试debug输出记录
+    private String debugLogFile;
 }

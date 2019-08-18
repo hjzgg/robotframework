@@ -34,6 +34,7 @@ public class RobotFrameworkMojoTest {
         LOGGER.error("TEST REPORT PATH IS " + path);
         robotFrameworkMojo.setTestCasesDirectory(new File(path + "/robotframework/acceptance"));
         robotFrameworkMojo.setOutputDirectory(new File(path + "/report"));
+        robotFrameworkMojo.setDebugFile(new File(path + "/report/hehe.txt"));
         robotFrameworkMojo.execute();
     }
 

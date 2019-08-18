@@ -21,7 +21,7 @@ public class CollectAppender extends AppenderBase<ILoggingEvent> {
             }
         }
         LoggerMessage loggerMessage = new LoggerMessage(
-                event.getMessage()
+                event.getFormattedMessage()
                 , DateFormat.getDateTimeInstance().format(new Date(event.getTimeStamp())),
                 event.getThreadName(),
                 event.getLoggerName(),

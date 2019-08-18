@@ -13,8 +13,8 @@ import java.util.concurrent.CountDownLatch;
 
 import static org.springframework.core.env.AbstractEnvironment.ACTIVE_PROFILES_PROPERTY_NAME;
 
-@EnableAspectJAutoProxy
-@SpringBootApplication
+@EnableAspectJAutoProxy(proxyTargetClass = true)
+@SpringBootApplication(scanBasePackages = "com.wmh.robotframework")
 public class Application {
 
 	public static void main(String[] args) {

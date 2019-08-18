@@ -1,17 +1,21 @@
 package com.wmh.robotframework.log;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-
 public class LoggerQueue {
+    private static final Logger LOGGER = LoggerFactory.getLogger(LoggerQueue.class);
+
     //队列大小
-    public static final int QUEUE_MAX_SIZE = 10000;
+    public static final int QUEUE_MAX_SIZE = 500;
 
     private static LoggerQueue collectMessageQueue = new LoggerQueue();
 
     //阻塞队列
-    private BlockingQueue blockingQueue = new LinkedBlockingQueue<>(QUEUE_MAX_SIZE);
+    private BlockingQueue<LoggerMessage> blockingQueue = new LinkedBlockingQueue<>(QUEUE_MAX_SIZE);
 
     private LoggerQueue() {
     }
@@ -38,10 +42,14 @@ public class LoggerQueue {
     public LoggerMessage poll() {
         LoggerMessage result = null;
         try {
-            result = (LoggerMessage) this.blockingQueue.take();
+            result = this.blockingQueue.take();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            LOGGER.error("消息出队异常", e);
         }
         return result;
+    }
+
+    public boolean isEmpty() {
+        return this.blockingQueue.isEmpty();
     }
 }

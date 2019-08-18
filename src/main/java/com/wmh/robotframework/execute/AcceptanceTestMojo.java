@@ -30,7 +30,7 @@ public class AcceptanceTestMojo extends AbstractMojoWithLoadedClasspath {
         }
         String[] runArguments = generateRunArguments();
 
-        LOGGER.info("robotframework arguments: " + StringUtils.join(runArguments, " "));
+        LOGGER.info("robotframework arguments: " + StringUtils.join(runArguments, StringUtils.SPACE));
         evaluateReturnCode(executeRobot(runArguments));
     }
 
