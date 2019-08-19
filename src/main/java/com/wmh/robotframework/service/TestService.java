@@ -58,11 +58,11 @@ public class TestService implements LoggerAdapter {
                 browserDriverManager.version(tp.getDriverVersion());
             }
             browserDriverManager.setup();
-            String browserDriverPath = browserDriverManager.getBinaryPath();
-            System.setProperty(browserExportProperties.resovleExportPath(tp.getDriverManagerType()), browserDriverPath);
-            LOGGER.info("load browser driver path: " + browserDriverPath);
 
+            String browserDriverPath = browserDriverManager.getBinaryPath();
+            LOGGER.info("load browser driver path: " + browserDriverPath);
             RobotFrameworkMojo robotFrameworkMojo = new RobotFrameworkMojo();
+            robotFrameworkMojo.getJvmArgs().put(browserExportProperties.resovleExportPath(tp.getDriverManagerType()), browserDriverPath);
             LOGGER.error("TEST CASE PATH IS " + tp.getTestCasesDirectory());
             robotFrameworkMojo.setTestCasesDirectory(new File(tp.getTestCasesDirectory()));
             LOGGER.error("TEST REPORT PATH IS " + tp.getTestCasesDirectory());

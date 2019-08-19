@@ -16,10 +16,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.StringTokenizer;
+import java.util.*;
 
 @Getter
 @Setter
@@ -61,6 +58,7 @@ public class AcceptanceTestMojo implements LoggerAdapter {
         String robotframeworkSeleniumlibraryJar = "./lib/robotframework-seleniumlibrary.jar";
         List<String> cmd = new ArrayList<String>();
         cmd.add(javaBin);
+        this.jvmArgs.forEach((key, value) -> cmd.add(String.format("\"-D%s=%s\"", key, value)));
         cmd.add("-jar");
         cmd.add(robotframeworkSeleniumlibraryJar);
         cmd.addAll(Arrays.asList(arguments));
@@ -231,7 +229,7 @@ public class AcceptanceTestMojo implements LoggerAdapter {
         generatedArguments.addFileToArguments(xunitFile, "-x");
         generatedArguments.addFlagToArguments(true, "--xunitskipnoncritical");
 
-        generatedArguments.add(testCasesDirectory.getPath());
+        generatedArguments.add(String.format("\"%s\"", testCasesDirectory.getPath()));
 
         return generatedArguments.toArray();
     }
@@ -713,6 +711,13 @@ public class AcceptanceTestMojo implements LoggerAdapter {
      * @parameter default-value="false"
      */
     private boolean noStatusReturnCode;
+
+    /**
+     * 系统变量传递
+     *
+     * @parameter
+     */
+    private Map<String, String> jvmArgs = new HashMap<>();
 }
 
 class StreamReader extends Thread {
