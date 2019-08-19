@@ -19,7 +19,7 @@ import static com.wmh.robotframework.log.LogConstants.COLLECT_LOGGER_NAME;
 
 @SpringBootTest(classes = Application.class)
 @RunWith(SpringRunner.class)
-public class YijianjianceTest {
+public class OneKeyCheckTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(COLLECT_LOGGER_NAME);
 
     static  {
@@ -36,7 +36,7 @@ public class YijianjianceTest {
         RobotFrameworkMojo robotFrameworkMojo = new RobotFrameworkMojo();
         String path = ResourceUtils.getFile("classpath:").getPath();
         LOGGER.error("TEST REPORT PATH IS " + path);
-        robotFrameworkMojo.setTestCasesDirectory(new File(path + "/robotframework/yijianjiance"));
+        robotFrameworkMojo.setTestCasesDirectory(new File(path + "/robotframework/oneKeyCheck"));
         robotFrameworkMojo.setOutputDirectory(new File(path + "/report"));
         robotFrameworkMojo.setDebugFile(new File(path + "/report/hehe.txt"));
         robotFrameworkMojo.execute();
