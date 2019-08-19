@@ -19,19 +19,13 @@ import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
-import javax.swing.JTree;
+import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -40,6 +34,8 @@ import javax.swing.tree.DefaultTreeModel;
 import org.apache.commons.lang3.StringUtils;
 
 import com.wmh.robotframework.bean.CaseEntity;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
 public class MenuBarDemo {
 	private Frame frame;
@@ -69,7 +65,24 @@ public class MenuBarDemo {
 	}
 
 	public void init() {
-		frame = new Frame("WMHRobotFWindow");
+		//设置界面风格
+		try {
+			String lookAndFeel =UIManager.getSystemLookAndFeelClassName();
+			UIManager.setLookAndFeel(lookAndFeel);
+		} catch (Exception e) {
+			// TODO
+		}
+
+		frame = new JFrame("WMHRobotFWindow");
+
+		//设置图标
+		try {
+			URL imgUrl = new ClassPathResource("imgs/robot.png").getURL();
+			frame.setIconImage(new ImageIcon(imgUrl).getImage());
+		} catch (IOException e) {
+			// TODO
+		}
+
 		frame.setBounds(150, 100, 1000, 600);
 		// 菜单栏
 		MenuBar menuBar = new MenuBar();
