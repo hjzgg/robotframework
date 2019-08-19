@@ -2,7 +2,6 @@ package com.wmh.robotframework.service;
 
 import com.wmh.robotframework.browser.BrowserDriverManager;
 import com.wmh.robotframework.config.BrowserExportProperties;
-import com.wmh.robotframework.config.CommonConfig;
 import com.wmh.robotframework.config.SpringContext;
 import com.wmh.robotframework.execute.RobotFrameworkMojo;
 import com.wmh.robotframework.log.ILogService;
@@ -17,6 +16,8 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.*;
 
 import static com.wmh.robotframework.log.LogConstants.TEST_CASE_CONTEXT_ID;
@@ -30,6 +31,8 @@ public class TestService implements LoggerAdapter {
             TimeUnit.MILLISECONDS,
             new LinkedBlockingQueue<>(100)
     );
+
+    private static final Map<String, Future<?>> FUTURE_MAP = new ConcurrentHashMap<>();
 
     @Autowired
     private BrowserExportProperties browserExportProperties;
@@ -69,6 +72,8 @@ public class TestService implements LoggerAdapter {
             robotFrameworkMojo.execute();
         });
 
+        FUTURE_MAP.put(testCaseId, future);
+
         //注册debug log文件的监听器
         ES.submit(() -> {
             //一次 读取 字节数
@@ -91,9 +96,18 @@ public class TestService implements LoggerAdapter {
                         logService.log(testCaseId, new String(content, 0, ll, StandardCharsets.UTF_8));
                     }
                 }
+                FUTURE_MAP.remove(testCaseId);
             } catch (Exception e) {
                 LOGGER.error("Debug log 同步异常...", e);
             }
         });
+    }
+
+    public boolean isFinish(String testCaseId) {
+        Future<?> future = FUTURE_MAP.get(testCaseId);
+        if (Objects.isNull(future)) {
+            return true;
+        }
+        return future.isDone() || future.isCancelled();
     }
 }

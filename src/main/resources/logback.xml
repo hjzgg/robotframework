@@ -7,13 +7,16 @@
 
     <!-- 控制台输出 -->
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-        <!--
-        日志输出格式：%d表示日期时间，%thread表示线程名，%-5level：级别从左显示5个字符宽度
-        %logger{50} 表示logger名字最长50个字符，否则按照句点分割。 %msg：日志消息，%n是换行符
-        -->
-        <layout class="ch.qos.logback.classic.PatternLayout">
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%relative] [%thread] %-5p %c[%L] - %msg%n</pattern>
-        </layout>
+        <encoder  class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+            <layout class="ch.qos.logback.classic.PatternLayout">
+                <!--
+                日志输出格式：%d表示日期时间，%thread表示线程名，%-5level：级别从左显示5个字符宽度
+                %logger{50} 表示logger名字最长50个字符，否则按照句点分割。 %msg：日志消息，%n是换行符
+                -->
+                <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%relative] [%thread] %-5p %c[%L] - %msg%n</pattern>
+            </layout>
+            <charset class="java.nio.charset.Charset">UTF-8</charset> <!-- 此处设置字符集 -->
+        </encoder>
     </appender>
 
     <!-- 每天生成一个文件 -->
@@ -25,8 +28,11 @@
             </FileNamePattern>
             <MaxHistory>30</MaxHistory>
         </rollingPolicy>
-        <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%relative] [%thread] %-5p %c[%L] - %msg%n</pattern>
+        <encoder  class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+            <layout class="ch.qos.logback.classic.PatternLayout">
+                <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%relative] [%thread] %-5p %c[%L] - %msg%n</pattern>
+            </layout>
+            <charset class="java.nio.charset.Charset">UTF-8</charset>
         </encoder>
     </appender>
 

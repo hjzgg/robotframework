@@ -9,7 +9,6 @@ import org.slf4j.MDC;
 
 import java.text.DateFormat;
 import java.util.Date;
-import java.util.Objects;
 
 import static com.wmh.robotframework.log.LogConstants.TEST_CASE_CONTEXT_ID;
 
