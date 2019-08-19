@@ -64,7 +64,7 @@ public class GUIDemo {
     private void initTreeMapData() {
         BufferedReader br = null;
         try {
-            br = new BufferedReader(new FileReader(new File("./data/treeMapData")));
+            br = new BufferedReader(new FileReader(new File("data/treeMapData")));
             String content;
             while ((content = br.readLine()) != null) {
                 LOGGER.info("初始化数据：" + content);
@@ -253,7 +253,7 @@ public class GUIDemo {
 
     private void saveData() {
         // 持久化 treeData
-        File file = new File("./data/treeMapData");
+        File file = new File("data/treeMapData");
         BufferedWriter br = null;
         try {
             br = new BufferedWriter(new FileWriter(file));
