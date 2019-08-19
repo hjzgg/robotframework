@@ -51,7 +51,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
 import org.apache.commons.lang3.StringUtils;
-import org.robotframework.javalib.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
@@ -67,7 +67,8 @@ import com.wmh.robotframework.service.TestService;
 @Component
 public class GUIDemo {
 
-	TestService testService;
+	@Autowired
+	private TestService testService;
 
 	private static Boolean initFlag = false;
 	private Frame frame;
@@ -98,12 +99,6 @@ public class GUIDemo {
 	private Map<String, String> versionMap = new ReadProperties("src/main/resources/versions.properties")
 			.getProperties();
 
-	public GUIDemo(TestService testService) {
-		super();
-		this.testService = testService;
-	}
-
-	@PostConstruct
 	public void initTreeMapData() {
 		BufferedReader br = null;
 		try {
@@ -135,7 +130,10 @@ public class GUIDemo {
 		}
 	}
 
+	@PostConstruct
 	public void init() {
+		initTreeMapData();
+
 		// 设置界面风格
 		try {
 			String lookAndFeel = UIManager.getSystemLookAndFeelClassName();
