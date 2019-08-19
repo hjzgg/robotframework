@@ -15,17 +15,26 @@ import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
+import javax.annotation.PostConstruct;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -35,6 +44,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTree;
+import javax.swing.UIManager;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -42,8 +52,11 @@ import javax.swing.tree.DefaultTreeModel;
 
 import org.apache.commons.lang3.StringUtils;
 import org.robotframework.javalib.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.wmh.robotframework.bean.CaseEntity;
 import com.wmh.robotframework.browser.DriverManagerType;
 import com.wmh.robotframework.browser.WebDriverManagerException;
@@ -54,9 +67,9 @@ import com.wmh.robotframework.service.TestService;
 @Component
 public class GUIDemo {
 
-	@Autowired
 	TestService testService;
 
+	private static Boolean initFlag = false;
 	private Frame frame;
 	private MenuItem menuItem;
 	private MenuItem openFileBtn;
@@ -76,21 +89,71 @@ public class GUIDemo {
 	private DefaultMutableTreeNode rootNode;
 	DefaultTreeModel treeModel;
 	private JFileChooser fileChooser;
-	private JComboBox<String> jcb1 ;
-	private List<String> browserVersion ;
-	private Map<String, CaseEntity> treeData = new HashMap<>();
+	private JComboBox<String> jcb1;
+	private List<String> browserVersion;
+	private static Map<String, CaseEntity> treeData;
 	/*
 	 * private String defaultProjectName; private String defaultSavePath;
 	 */
 	private Map<String, String> versionMap = new ReadProperties("src/main/resources/versions.properties")
 			.getProperties();
 
-	public GUIDemo() {
+	public GUIDemo(TestService testService) {
 		super();
+		this.testService = testService;
+	}
+
+	@PostConstruct
+	public void initTreeMapData() {
+		BufferedReader br = null;
+		try {
+			br = new BufferedReader(new FileReader(new File("src/main/resources/treeMapData")));
+			String content;
+			while ((content = br.readLine()) != null) {
+				System.out.println("初始化数据：" + content);
+				JSONObject jsonObject = JSONObject.parseObject(content);
+				for (Entry<String, Object> entry : jsonObject.entrySet()) {
+					if (null == treeData) {
+						treeData = new HashMap<>();
+					}
+					treeData.put(entry.getKey(), JSONObject.parseObject(entry.getValue().toString(), CaseEntity.class));
+					initFlag = true;
+					System.out.println("初始化后jtree数据：" + JSONObject.toJSONString(treeData));
+				}
+			}
+		} catch (Exception e) {
+			initFlag = false;
+			System.out.println("未找到指定文件");
+		} finally {
+			try {
+				br.close();
+			} catch (Exception e) {
+				System.out.println("初始化失败");
+				initFlag = false;
+
+			}
+		}
 	}
 
 	public void init() {
-		frame = new Frame("WMHRobotFWindow");
+		// 设置界面风格
+		try {
+			String lookAndFeel = UIManager.getSystemLookAndFeelClassName();
+			UIManager.setLookAndFeel(lookAndFeel);
+		} catch (Exception e) {
+			// TODO
+		}
+
+		frame = new JFrame("WMHRobotFWindow");
+
+		// 设置图标
+		try {
+			URL imgUrl = new ClassPathResource("imgs/robot.png").getURL();
+			frame.setIconImage(new ImageIcon(imgUrl).getImage());
+		} catch (IOException e) {
+			// TODO
+		}
+
 		frame.setBounds(150, 100, 1000, 600);
 		// 菜单栏
 		MenuBar menuBar = new MenuBar();
@@ -130,7 +193,7 @@ public class GUIDemo {
 		dialog.add(chooseFileBtn);
 		dialog.add(ok, JButton.CENTER_ALIGNMENT);
 		dialog.add(cancel, JButton.CENTER_ALIGNMENT);
-		rootTree = preDealTrees(false);
+		rootTree = preDealTrees(initFlag);
 
 		JTree tree = new JTree(new DefaultMutableTreeNode("Test Case Diretory"));
 
@@ -150,7 +213,7 @@ public class GUIDemo {
 
 	private JTabbedPane initTabbedPane() {
 		JTabbedPane jtp = new JTabbedPane();
-		if(null == browserVersion) {
+		if (null == browserVersion) {
 			browserVersion = new ArrayList<>();
 			for (Entry<String, String> entry : versionMap.entrySet()) {
 				browserVersion.add(entry.getKey().substring(0, entry.getKey().length() - 2) + "---" + entry.getValue());
@@ -165,7 +228,7 @@ public class GUIDemo {
 		String[] arr = new String[browserVersion.size()];
 		String[] browser = browserVersion.toArray(arr);
 
-		jcb1 = new JComboBox<>(browser); 
+		jcb1 = new JComboBox<>(browser);
 		jcb1.addActionListener(new ActionListener() {
 
 			@Override
@@ -202,13 +265,14 @@ public class GUIDemo {
 	}
 
 	private JTree preDealTrees(Boolean flag) {
-		if (treeData.isEmpty()) {
-			rootNode = new DefaultMutableTreeNode("Test Case Directory");
-			treeModel = new DefaultTreeModel(rootNode);
-			System.out.println("treeModel:" + treeModel.getChildCount(rootNode));
-			rootTree = new JTree(treeModel);
-			return rootTree;
-		} else {
+		System.out.println("jtree数据：" + JSONObject.toJSONString(treeData));
+		rootNode = new DefaultMutableTreeNode("Test Case Directory");
+		treeModel = new DefaultTreeModel(rootNode);
+		System.out.println("treeModel:" + treeModel.getChildCount(rootNode));
+		rootTree = new JTree(treeModel);
+
+		if (initFlag) {
+
 			for (Entry<String, CaseEntity> entry : treeData.entrySet()) {
 				DefaultMutableTreeNode node = new DefaultMutableTreeNode(entry.getKey());
 				rootNode.add(node);
@@ -218,9 +282,8 @@ public class GUIDemo {
 				treeModel.reload();
 				System.out.println("重加载treeModel:" + treeModel.getChildCount(rootNode));
 			}
-			// rootTree = new JTree(treeModel);
-			return rootTree;
 		}
+		return rootTree;
 	}
 
 	private void reloadTrees(CaseEntity caseEntity) {
@@ -231,6 +294,30 @@ public class GUIDemo {
 		System.out.println("重加载treeModel:" + treeModel.getChildCount(rootNode));
 	}
 
+	private void saveData() {
+		// 持久化 treeData
+				File file = new File("src/main/resources/treeMapData");
+				BufferedWriter br = null;
+				try {
+					br = new BufferedWriter(new FileWriter(file));
+					br.write(JSONObject.toJSONString(treeData));
+					br.flush();
+				} catch (IOException e) {
+					e.printStackTrace();
+				} finally {
+					try {
+						br.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+
+				System.out.println("实例化 treeData成功");
+	}
+
+	
+	
+	
 	/**
 	 * 
 	 */
@@ -245,8 +332,7 @@ public class GUIDemo {
 				String versionText = version.getText();
 				String scriptText = scripts.getText();
 				DefaultMutableTreeNode a = (DefaultMutableTreeNode) rootTree.getLastSelectedPathComponent();
-				
-				
+
 				String projectName = a.getUserObject().toString();
 				CaseEntity caseEntity = treeData.get(projectName);
 				if (StringUtils.isBlank(versionText) || StringUtils.isBlank(scriptText) || null == caseEntity) {
@@ -256,10 +342,12 @@ public class GUIDemo {
 
 					return;
 				}
-				
+
 				caseEntity.setBrowserVersion(versionText);
 				caseEntity.setCaseScript(scriptText);
 				treeData.put(projectName, caseEntity);
+				saveData();
+				
 				for (Entry<String, CaseEntity> string : treeData.entrySet()) {
 					System.out.println(string.getValue().toString());
 				}
@@ -309,8 +397,8 @@ public class GUIDemo {
 
 				if (e.getModifiers() == InputEvent.BUTTON1_MASK) {
 					DefaultMutableTreeNode a = (DefaultMutableTreeNode) rootTree.getLastSelectedPathComponent();
-					
-					if(a.isLeaf()) {
+
+					if (a.isLeaf()) {
 						String projectName = a.getUserObject().toString();
 						System.out.println("projectName" + projectName);
 						for (Entry<String, CaseEntity> entry : treeData.entrySet()) {
@@ -320,14 +408,14 @@ public class GUIDemo {
 						String browserVersion = caseEntity.getBrowserVersion();
 						String caseScript = caseEntity.getCaseScript();
 
-						if(StringUtils.isNotBlank(caseScript)) {
+						if (StringUtils.isNotBlank(caseScript)) {
 							scripts.setText(caseScript);
 						}
-						if(StringUtils.isNotBlank(browserVersion)) {
+						if (StringUtils.isNotBlank(browserVersion)) {
 							jcb1.setSelectedItem(browserVersion);
-							//ddfaf
+							// ddfaf
 						}
-						
+
 						System.out.println("caseScript" + caseScript);
 						System.out.println("savePath" + caseEntity.getSaveDirecotry());
 					}
@@ -364,6 +452,7 @@ public class GUIDemo {
 				caseEntity.setCaseName(projectName);
 				caseEntity.setSaveDirecotry(field2.getText());
 				treeData.put(projectName, caseEntity);
+				saveData();
 				System.out.println("ok：treeData 大小" + treeData.size() + "defaultProjectName:" + projectName);
 				reloadTrees(caseEntity);
 				System.out.println("treeModel大小：" + treeModel.getChildCount(rootNode));
@@ -448,13 +537,6 @@ public class GUIDemo {
 				}
 			}
 		});
-	}
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		new GUIDemo().init();
 	}
 
 	public DriverManagerType getDriverType(String type) {

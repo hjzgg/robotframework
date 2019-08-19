@@ -1,6 +1,9 @@
 package com.wmh.robotframework.main;
 
-import com.wmh.robotframework.gui.GuiApplicationContextInitializer;
+import static org.springframework.core.env.AbstractEnvironment.ACTIVE_PROFILES_PROPERTY_NAME;
+
+import java.util.concurrent.CountDownLatch;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,15 +14,13 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.core.env.SimpleCommandLinePropertySource;
 
-import java.util.concurrent.CountDownLatch;
-
-import static org.springframework.core.env.AbstractEnvironment.ACTIVE_PROFILES_PROPERTY_NAME;
-
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @SpringBootApplication(scanBasePackages = "com.wmh.robotframework")
 public class Application {
 
 	public static void main(String[] args) {
+		System.setProperty("java.awt.headless", "false");
+
 		SimpleCommandLinePropertySource commandLineProperty = new SimpleCommandLinePropertySource(args);
 		String activeProfile = commandLineProperty.getProperty(ACTIVE_PROFILES_PROPERTY_NAME);
 		if (StringUtils.isBlank(activeProfile)) {
@@ -41,7 +42,6 @@ public class Application {
 			new SpringApplicationBuilder()
 					.web(WebApplicationType.NONE)
 					.sources(Application.class)
-					.initializers(new GuiApplicationContextInitializer())
 					.bannerMode(Banner.Mode.LOG)
 					.run(args);
 			Logger logger = LoggerFactory.getLogger(Application.class);
