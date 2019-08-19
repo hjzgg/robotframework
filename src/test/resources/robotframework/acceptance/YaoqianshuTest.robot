@@ -12,8 +12,8 @@ ${robotVar} =            FooBarBaz
 
 
 *** Testcases ***
-testcase
-    open yaoqianshu
+#testcase
+#    open yaoqianshu
 
 #Foo Test Case
 #    [tags]              FooTag
@@ -33,6 +33,7 @@ testcase
 #    Open yaoqianshu
 #    small bell
 #    Wait Until Element Is Visible   xpath://html/body/div[7]/div[7]/div[2]  10s
+#    sleep   5s
 #    close small bell
 
 #strategy Test Case
@@ -47,7 +48,7 @@ testcase
 #    open yaoqianshu
 #    task
 
-#Daily get water Task Test Case
-#    open yaoqianshu
-#    daily get water task
-#    close task
+Daily get water Task Test Case
+    open yaoqianshu
+    daily get water task
+    close task
