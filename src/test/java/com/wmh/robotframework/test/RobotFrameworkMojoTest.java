@@ -31,7 +31,7 @@ public class RobotFrameworkMojoTest {
     @Test
     public void testChrome() throws FileNotFoundException {
         BrowserDriverManager.chromedriver().useMirror().setup();
-//        BrowserDriverManager.chromedriver().useMirror().version("77.0.3865.10").setup();
+//      BrowserDriverManager.chromedriver().useMirror().version("77.0.3865.10").setup();
         String browserDriverPath = BrowserDriverManager.chromedriver().getBinaryPath();
         LOGGER.info("load browser driver path: " + browserDriverPath);
         System.setProperty("webdriver.chrome.driver", browserDriverPath);
@@ -39,7 +39,7 @@ public class RobotFrameworkMojoTest {
         RobotFrameworkMojo robotFrameworkMojo = new RobotFrameworkMojo();
         String path = ResourceUtils.getFile("classpath:").getPath();
         LOGGER.error("TEST REPORT PATH IS " + path);
-        robotFrameworkMojo.setTestCasesDirectory(new File(path + "/robotframework/acceptance"));
+        robotFrameworkMojo.setTestCasesDirectory(new File(path + "/robotframework/acceptance/OneKeyCheck"));
         robotFrameworkMojo.setOutputDirectory(new File(path + "/report"));
         robotFrameworkMojo.setDebugFile(new File(path + "/report/hehe.txt"));
         robotFrameworkMojo.execute();
