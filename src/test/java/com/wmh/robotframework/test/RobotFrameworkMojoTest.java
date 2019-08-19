@@ -3,6 +3,7 @@ package com.wmh.robotframework.test;
 import com.wmh.robotframework.browser.BrowserDriverManager;
 import com.wmh.robotframework.execute.RobotFrameworkMojo;
 import com.wmh.robotframework.main.Application;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
@@ -27,6 +28,10 @@ import static com.wmh.robotframework.log.LogConstants.COLLECT_LOGGER_NAME;
 @RunWith(SpringRunner.class)
 public class RobotFrameworkMojoTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(COLLECT_LOGGER_NAME);
+
+    static  {
+        System.setProperty("java.awt.headless", "false");
+    }
 
     @Test
     public void testChrome() throws FileNotFoundException {

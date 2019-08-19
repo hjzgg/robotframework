@@ -15,6 +15,9 @@ import java.util.concurrent.TimeUnit;
 @SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @RunWith(SpringRunner.class)
 public class TestServiceTest {
+    static  {
+        System.setProperty("java.awt.headless", "false");
+    }
 
     @Autowired
     private TestService testService;
