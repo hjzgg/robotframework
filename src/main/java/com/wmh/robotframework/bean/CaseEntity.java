@@ -21,6 +21,20 @@ public class CaseEntity implements Serializable {
 	 * 浏览器版本 
 	 */
 	private String browserVersion;
+	 
+	/**
+	 *  保存位置
+	 */
+	private String saveDirecotry;
+	
+	public String getSaveDirecotry() {
+		return saveDirecotry;
+	}
+
+
+	public void setSaveDirecotry(String saveDirecotry) {
+		this.saveDirecotry = saveDirecotry;
+	}
 
 
 	public String getCaseName() {
@@ -51,4 +65,13 @@ public class CaseEntity implements Serializable {
 	public void setBrowserVersion(String browserVersion) {
 		this.browserVersion = browserVersion;
 	}
+
+
+	@Override
+	public String toString() {
+		return "CaseEntity [caseName=" + caseName + ", caseScript=" + caseScript + ", browserVersion=" + browserVersion
+				+ ", saveDirecotry=" + saveDirecotry + "]";
+	}
+	
+	
 }
