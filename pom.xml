@@ -81,12 +81,8 @@
 			<groupId>com.github.hi-fi</groupId>
 			<artifactId>robotframework-seleniumlibrary</artifactId>
 			<version>3.141.59.265</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>webdrivermanager</artifactId>
-					<groupId>io.github.bonigarcia</groupId>
-				</exclusion>
-			</exclusions>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/robotframework-seleniumlibrary.jar</systemPath>
 		</dependency>
 
 		<!-- jcl-over-slf4j -->
@@ -153,6 +149,7 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
+					<includeSystemScope>true</includeSystemScope>
 					<excludes>
 						<exclude>
 							<groupId>commons-logging</groupId>

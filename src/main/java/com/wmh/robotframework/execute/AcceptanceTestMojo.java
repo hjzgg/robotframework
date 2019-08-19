@@ -1,9 +1,9 @@
 package com.wmh.robotframework.execute;
 
+import com.wmh.robotframework.log.LoggerAdapter;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
-import org.robotframework.RobotFramework;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -16,14 +16,16 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.StringTokenizer;
 
 @Getter
 @Setter
-public class AcceptanceTestMojo extends AbstractMojoWithLoadedClasspath {
+public class AcceptanceTestMojo implements LoggerAdapter {
 
-    protected void subclassExecute() {
-
+    public void execute() {
         if (shouldSkipTests()) {
             LOGGER.info("RobotFramework tests are skipped.");
             return;
@@ -35,31 +37,16 @@ public class AcceptanceTestMojo extends AbstractMojoWithLoadedClasspath {
     }
 
     private int executeRobot(String[] runArguments) {
-        if (externalRunner == null) {
-            return RobotFramework.run(runArguments);
-        } else {
-            return externalExecute(runArguments);
-        }
-    }
-
-    private int externalExecute(String[] runArguments) {
         try {
-            return exec(RobotFramework.class, runArguments, externalRunner.getEnvironmentVariables());
+            return exec(runArguments);
         } catch (Exception e) {
             throw new IllegalStateException("exec errors", e);
         }
     }
 
-    public int exec(Class klass, String[] arguments, Map<String, String> environment) throws IOException,
+    public int exec(String[] arguments) throws IOException,
             InterruptedException {
-        ProcessBuilder builder = new ProcessBuilder(createExternalCommand(klass, arguments, externalRunner.getJvmArgs()));
-        Map<String, String> env = builder.environment();
-        String classpath = externalRunner.getExcludeDependencies() ? getRobotJar() : getClassPathString();
-        if (environment.containsKey("CLASSPATH")) {
-            classpath = environment.get("CLASSPATH") + File.pathSeparator + classpath;
-        }
-        env.putAll(environment);
-        env.put("CLASSPATH", classpath);
+        ProcessBuilder builder = new ProcessBuilder(createExternalCommand(arguments));
         Process process = builder.start();
         StreamReader stdout = new StreamReader(process.getInputStream());
         StreamReader stderr = new StreamReader(process.getErrorStream());
@@ -68,14 +55,14 @@ public class AcceptanceTestMojo extends AbstractMojoWithLoadedClasspath {
         return process.waitFor();
     }
 
-    private List<String> createExternalCommand(Class klass, String[] arguments, List<String> jvmArgs) {
+    private List<String> createExternalCommand(String[] arguments) {
         String javaHome = System.getProperty("java.home");
         String javaBin = join(File.separator, javaHome, "bin", "java");
-        String className = klass.getCanonicalName();
+        String robotframeworkSeleniumlibraryJar = "./lib/robotframework-seleniumlibrary.jar";
         List<String> cmd = new ArrayList<String>();
         cmd.add(javaBin);
-        cmd.addAll(jvmArgs);
-        cmd.add(className);
+        cmd.add("-jar");
+        cmd.add(robotframeworkSeleniumlibraryJar);
         cmd.addAll(Arrays.asList(arguments));
         LOGGER.info("Executing Robot with command: {}", cmd);
         return cmd;
@@ -247,6 +234,25 @@ public class AcceptanceTestMojo extends AbstractMojoWithLoadedClasspath {
         generatedArguments.add(testCasesDirectory.getPath());
 
         return generatedArguments.toArray();
+    }
+
+    protected static String join(String joiner, String... elements) {
+        StringBuilder result = new StringBuilder();
+        for (String elem : elements) {
+            result.append(elem).append(joiner);
+        }
+        return result.substring(0, result.length() - joiner.length());
+    }
+
+
+    public File makeAbsolute(File folder, File file) {
+        final File output;
+        if (file.isAbsolute()) {
+            output = file;
+        } else {
+            output = new File(folder, file.getName());
+        }
+        return output;
     }
 
     /**
@@ -707,37 +713,6 @@ public class AcceptanceTestMojo extends AbstractMojoWithLoadedClasspath {
      * @parameter default-value="false"
      */
     private boolean noStatusReturnCode;
-
-    /**
-     * <p>Test are executed in a new process if this configuration is used.</p>
-     * <p>The classpath for the new process will include by default all the test
-     * scope dependencies from the pom.</p>
-     *
-     * <ul>
-     *     <li>Environment variables can be added with <strong>environmentVariables</strong> map. CLASSPATH environment
-     *     variable is added (prepended) to the default dependencies.</li>
-     *     <li><strong>excludeDependencies</strong> can be used to exclude the test scope dependencies from the classpath of the new process.</li>
-     *     <li><strong>jvmArgs</strong> can be used to specify JVM options</li>
-     * </ul>
-     * <p>
-     * Example:
-     * <pre><![CDATA[<externalRunner>
-     *      <environmentVariables>
-     *          <foo>bar</foo>
-     *          <CLASSPATH>this-should-be-seen-by-external-process.jar</CLASSPATH>
-     *      </environmentVariables>
-     *      <jvmArgs>
-     *          <jvmArg>-XX:PermSize=128m</jvmArg>
-     *          <jvmArg>-XX:MaxPermSize=256m</jvmArg>
-     *          <jvmArg>-Xmx512m</jvmArg>
-     *      </jvmArgs>
-     *      <excludeDependencies>true</excludeDependencies>
-     * </externalRunner>]]></pre>
-     *
-     * @parameter
-     */
-    private ExternalRunnerConfiguration externalRunner;
-
 }
 
 class StreamReader extends Thread {
