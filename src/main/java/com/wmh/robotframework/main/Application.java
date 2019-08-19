@@ -1,5 +1,6 @@
 package com.wmh.robotframework.main;
 
+import com.wmh.robotframework.gui.GuiApplicationContextInitializer;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +40,7 @@ public class Application {
 			new SpringApplicationBuilder()
 					.web(WebApplicationType.NONE)
 					.sources(Application.class)
+					.initializers(new GuiApplicationContextInitializer())
 					.run(args);
 			Logger logger = LoggerFactory.getLogger(Application.class);
 			try {
