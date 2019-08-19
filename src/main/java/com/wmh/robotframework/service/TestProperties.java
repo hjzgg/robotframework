@@ -17,4 +17,6 @@ public class TestProperties {
     private String outputDirectory;
     //测试debug输出记录
     private String debugLogFile;
+    //测试唯一标识
+    private String testCaseId;
 }

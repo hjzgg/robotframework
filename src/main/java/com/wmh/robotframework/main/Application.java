@@ -1,8 +1,10 @@
 package com.wmh.robotframework.main;
 
+import com.wmh.robotframework.gui.GuiApplicationContextInitializer;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.Banner;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -39,6 +41,8 @@ public class Application {
 			new SpringApplicationBuilder()
 					.web(WebApplicationType.NONE)
 					.sources(Application.class)
+					.initializers(new GuiApplicationContextInitializer())
+					.bannerMode(Banner.Mode.LOG)
 					.run(args);
 			Logger logger = LoggerFactory.getLogger(Application.class);
 			try {

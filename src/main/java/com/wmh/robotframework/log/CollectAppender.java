@@ -38,10 +38,8 @@ public class CollectAppender extends AppenderBase<ILoggingEvent> {
 
     private void log(LoggerMessage message) {
         ILogService logService = SpringContext.getBean(ILogService.class);
-        if (Objects.nonNull(logService)) {
-            String caseId = MDC.get(TEST_CASE_CONTEXT_ID);
-            String msg = String.format("%s - %s - %s - %s", message.getTimestamp(), message.getClassName(), message.getBody(), message.getException());
-            logService.log(caseId, msg);
-        }
+        String caseId = MDC.get(TEST_CASE_CONTEXT_ID);
+        String msg = String.format("%s - %s - %s - %s", message.getTimestamp(), message.getClassName(), message.getBody(), message.getException());
+        logService.log(caseId, msg);
     }
 }

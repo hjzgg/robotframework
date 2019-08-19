@@ -10,6 +10,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.ResourceUtils;
 
 import java.io.FileNotFoundException;
+import java.util.concurrent.TimeUnit;
 
 @SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @RunWith(SpringRunner.class)
@@ -19,12 +20,14 @@ public class TestServiceTest {
     private TestService testService;
 
     @Test
-    public void test() throws FileNotFoundException {
+    public void test() throws FileNotFoundException, InterruptedException {
         TestProperties tp = new TestProperties();
         tp.setDriverManagerType(DriverManagerType.CHROME);
         String path = ResourceUtils.getFile("classpath:").getPath();
         tp.setTestCasesDirectory(path + "/robotframework/acceptance");
         tp.setOutputDirectory(path + "/report");
+        tp.setTestCaseId("123");
         testService.execute(tp);
+        TimeUnit.MINUTES.sleep(2);
     }
 }
