@@ -65,11 +65,6 @@ public class GUIDemo {
 	private Map<String, String> versionMap = new ReadProperties("src/main/resources/versions.properties")
 			.getProperties();
 
-	public GUIDemo(TestService testService) {
-		super();
-		this.testService = testService;
-	}
-
 	private void initTreeMapData() {
 		BufferedReader br = null;
 		try {
@@ -541,8 +536,8 @@ public class GUIDemo {
 			br = new BufferedWriter(new FileWriter(new File(filePath)));
 			br.write(caseScript);
 			br.flush();
-
 		} catch (IOException e) {
+			LOGGER.error("saveFile error...", e);
 		} finally {
 			try {
 				br.close();
