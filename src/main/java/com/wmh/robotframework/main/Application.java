@@ -20,6 +20,7 @@ public class Application {
 
 	public static void main(String[] args) {
 		System.setProperty("java.awt.headless", "false");
+		System.setProperty("file.encoding", "utf-8");
 
 		SimpleCommandLinePropertySource commandLineProperty = new SimpleCommandLinePropertySource(args);
 		String activeProfile = commandLineProperty.getProperty(ACTIVE_PROFILES_PROPERTY_NAME);
