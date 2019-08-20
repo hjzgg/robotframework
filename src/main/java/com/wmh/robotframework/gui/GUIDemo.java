@@ -64,7 +64,7 @@ public class GUIDemo {
     private void initTreeMapData() {
         BufferedReader br = null;
         try {
-            br = new BufferedReader(new FileReader(new File("data/treeMapData")));
+            br = new BufferedReader(new InputStreamReader(new FileInputStream(new File("data/treeMapData")), "UTF-8"));
             String content;
             while ((content = br.readLine()) != null) {
                 LOGGER.info("初始化数据：" + content);
@@ -256,7 +256,7 @@ public class GUIDemo {
         File file = new File("data/treeMapData");
         BufferedWriter br = null;
         try {
-            br = new BufferedWriter(new FileWriter(file));
+            br = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), "UTF-8"));
             br.write(JSONObject.toJSONString(treeData));
             br.flush();
         } catch (IOException e) {
